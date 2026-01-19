@@ -5,11 +5,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StatusBar, Animated } from 'react-native';
-import { usePrivy } from '@privy-io/expo';
+import { usePrivyAuth } from '@hooks/usePrivyAuth';
 import { Colors, TerminalStyles } from '@constants/theme';
 
 export default function LoginScreen() {
-  const { login, ready, authenticated } = usePrivy();
+  const { loginWithOAuth, isReady, oAuthState } = usePrivyAuth();
   const [cursorVisible, setCursorVisible] = useState(true);
   const [bootText, setBootText] = useState('');
   const bootSequence = [
@@ -42,9 +42,12 @@ export default function LoginScreen() {
   }, []);
 
   const handleLogin = async () => {
-    if (!ready) return;
-    await login();
+    if (!isReady) return;
+    // Login with Google OAuth (can be changed to other providers)
+    await loginWithOAuth({ provider: 'google' });
   };
+
+  const isLoading = oAuthState.status === 'loading';
 
   return (
     <View className="flex-1 bg-terminal-bg px-6 justify-center">
@@ -77,11 +80,11 @@ export default function LoginScreen() {
         {/* Login Button - Terminal Style */}
         <TouchableOpacity
           onPress={handleLogin}
-          disabled={!ready}
+          disabled={!isReady || isLoading}
           className="bg-terminal-gray border border-neon-cyan px-6 py-4 active:bg-neon-cyan/10"
         >
           <Text className="font-mono-bold text-neon-cyan text-center text-base">
-            {ready ? '> CONNECT WALLET' : '> INITIALIZING...'}
+            {isLoading ? '> CONNECTING...' : isReady ? '> CONNECT WALLET' : '> INITIALIZING...'}
           </Text>
         </TouchableOpacity>
 

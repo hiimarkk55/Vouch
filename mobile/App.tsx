@@ -38,10 +38,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <PrivyProvider
-        appId={Config.privy.appId}
-        clientId={Config.privy.appId}
-      >
+      <PrivyProvider appId={Config.privy.appId}>
         <AppNavigator />
       </PrivyProvider>
     </SafeAreaProvider>

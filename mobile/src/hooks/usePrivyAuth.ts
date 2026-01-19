@@ -4,30 +4,33 @@
  */
 
 import { useEffect } from 'react';
-import { usePrivy } from '@privy-io/expo';
+import { usePrivy, useLoginWithOAuth } from '@privy-io/expo';
 import { initializeFirebase } from '@services/firebase';
 
 export function usePrivyAuth() {
-  const {
-    ready,
-    authenticated,
-    user,
-    login,
-    logout,
-  } = usePrivy();
+  const { user, isReady, logout, getAccessToken } = usePrivy();
+
+  // Login methods using OAuth (Google, Twitter, etc.)
+  const { login: loginWithOAuth, state: oAuthState } = useLoginWithOAuth();
+
+  // Derive authenticated state from user existence
+  const isAuthenticated = user !== null;
 
   // Initialize Firebase when user authenticates
   useEffect(() => {
-    if (authenticated) {
+    if (isAuthenticated) {
       initializeFirebase();
     }
-  }, [authenticated]);
+  }, [isAuthenticated]);
 
   return {
-    isReady: ready,
-    isAuthenticated: authenticated,
+    isReady,
+    isAuthenticated,
     user,
-    login,
     logout,
+    getAccessToken,
+    // OAuth login (Google, Twitter, Discord, etc.)
+    loginWithOAuth,
+    oAuthState,
   };
 }

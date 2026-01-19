@@ -13,6 +13,7 @@ import { Platform, Alert } from 'react-native';
 import AppleHealthKit, {
   HealthValue,
   HealthKitPermissions,
+  HealthObserver,
 } from 'react-native-health';
 
 export interface WorkoutData {
@@ -57,7 +58,7 @@ export function useBiometricSync() {
   // Initialize HealthKit on iOS
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      AppleHealthKit.initHealthKit(HEALTHKIT_PERMISSIONS, (error) => {
+      AppleHealthKit.initHealthKit(HEALTHKIT_PERMISSIONS, (error: string | undefined) => {
         if (error) {
           console.error('[BIOMETRIC] HealthKit init failed:', error);
           setIsInitialized(false);
@@ -118,13 +119,12 @@ export function useBiometricSync() {
       const options = {
         startDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 24h ago
         endDate: new Date().toISOString(),
-        limit: 1, // Most recent only
+        type: HealthObserver.Workout, // Query for workout samples
       };
 
       AppleHealthKit.getSamples(
-        AppleHealthKit.Constants.Permissions.Workout,
         options,
-        (error, results) => {
+        (error: string | undefined, results: any[]) => {
           if (error) {
             resolve({
               success: false,
@@ -183,7 +183,7 @@ export function useBiometricSync() {
   const requestPermissions = async (): Promise<boolean> => {
     if (Platform.OS === 'ios') {
       return new Promise((resolve) => {
-        AppleHealthKit.initHealthKit(HEALTHKIT_PERMISSIONS, (error) => {
+        AppleHealthKit.initHealthKit(HEALTHKIT_PERMISSIONS, (error: string | undefined) => {
           if (error) {
             Alert.alert(
               'PERMISSION DENIED',
