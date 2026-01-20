@@ -6,10 +6,10 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { usePrivyAuth } from '@hooks/usePrivyAuth';
-import LoginScreen from '@screens/LoginScreen';
-import ProofOfWorkCamera from '@screens/ProofOfWorkCamera';
-import { Colors } from '@constants/theme';
+import { usePrivyAuth } from '../hooks/usePrivyAuth';
+import LoginScreen from '../screens/LoginScreen';
+import ProofOfWorkCamera from '../screens/ProofOfWorkCamera';
+import { Colors } from '../constants/theme';
 
 const Stack = createNativeStackNavigator();
 

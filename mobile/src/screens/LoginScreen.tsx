@@ -6,8 +6,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StatusBar, StyleSheet } from 'react-native';
-import { usePrivyAuth } from '@hooks/usePrivyAuth';
-import { Colors, TerminalStyles } from '@constants/theme';
+import { usePrivyAuth } from '../hooks/usePrivyAuth';
+import { Colors, TerminalStyles } from '../constants/theme';
 
 export default function LoginScreen() {
   const { loginWithOAuth, isReady, oAuthState } = usePrivyAuth();
