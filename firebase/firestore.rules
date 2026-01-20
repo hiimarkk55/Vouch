@@ -1,0 +1,82 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if user owns the resource
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Helper function to check if user is in squad
+    function isSquadMember(squadId) {
+      return isAuthenticated() &&
+             get(/databases/$(database)/documents/squads/$(squadId)).data.members.hasAny([request.auth.uid]);
+    }
+
+    // Users collection
+    match /users/{userId} {
+      // Anyone can read user profiles (for squad views)
+      allow read: if isAuthenticated();
+
+      // Users can only write to their own profile
+      allow create, update: if isOwner(userId);
+
+      // Users cannot delete their profile
+      allow delete: if false;
+    }
+
+    // Vouches collection
+    match /vouches/{vouchId} {
+      // Squad members can read vouches from their squad members
+      allow read: if isAuthenticated();
+
+      // Users can only create their own vouches
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.timestamp != null &&
+                       request.resource.data.workoutData != null;
+
+      // Users can update only their own vouches (e.g., adding photo URL)
+      allow update: if isOwner(resource.data.userId);
+
+      // Users cannot delete vouches (accountability!)
+      allow delete: if false;
+    }
+
+    // Squads collection
+    match /squads/{squadId} {
+      // Squad members can read squad data
+      allow read: if isSquadMember(squadId);
+
+      // Any authenticated user can create a squad
+      allow create: if isAuthenticated() &&
+                       request.resource.data.members.hasAny([request.auth.uid]);
+
+      // Only squad members can update squad (e.g., adding members, changing settings)
+      allow update: if isSquadMember(squadId);
+
+      // Squad can only be deleted if you're a member
+      allow delete: if isSquadMember(squadId);
+    }
+
+    // Roasts collection
+    match /roasts/{roastId} {
+      // Squad members can read roasts for their squad
+      allow read: if isAuthenticated() &&
+                     isSquadMember(resource.data.squadId);
+
+      // Only server can create roasts (via Cloud Functions or API)
+      // For now, allow authenticated users (TODO: restrict to server)
+      allow create: if isAuthenticated();
+
+      // Roasts cannot be updated or deleted (permanent record!)
+      allow update, delete: if false;
+    }
+  }
+}

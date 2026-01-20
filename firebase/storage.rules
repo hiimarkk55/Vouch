@@ -1,0 +1,57 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check file size (max 10MB for photos)
+    function isValidImageSize() {
+      return request.resource.size < 10 * 1024 * 1024;
+    }
+
+    // Helper function to check if file is an image
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    // Workout proof photos
+    match /vouches/{userId}/{timestamp}.jpg {
+      // Anyone authenticated can read (for squad feed)
+      allow read: if isAuthenticated();
+
+      // Only the user can upload their own proof photos
+      allow create: if isAuthenticated() &&
+                       request.auth.uid == userId &&
+                       isImage() &&
+                       isValidImageSize();
+
+      // Users can update their own photos (e.g., retry upload)
+      allow update: if isAuthenticated() &&
+                       request.auth.uid == userId &&
+                       isImage() &&
+                       isValidImageSize();
+
+      // Photos cannot be deleted (proof of work is permanent!)
+      allow delete: if false;
+    }
+
+    // User avatars
+    match /avatars/{userId}.jpg {
+      // Anyone authenticated can read avatars
+      allow read: if isAuthenticated();
+
+      // Users can upload/update only their own avatar
+      allow create, update: if isAuthenticated() &&
+                               request.auth.uid == userId &&
+                               isImage() &&
+                               isValidImageSize();
+
+      // Users can delete their own avatar
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
+    }
+  }
+}
