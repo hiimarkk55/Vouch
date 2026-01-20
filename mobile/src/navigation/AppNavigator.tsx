@@ -14,11 +14,10 @@ import { Colors } from '@constants/theme';
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
-  const { isAuthenticated, isReady } = usePrivyAuth();
+  const { isAuthenticated } = usePrivyAuth();
 
-  if (!isReady) {
-    return null; // Or a loading screen
-  }
+  // TEMPORARY: Removed isReady check - was causing infinite splash screen
+  // App now loads immediately and handles auth state dynamically
 
   return (
     <NavigationContainer>
@@ -29,7 +28,7 @@ export default function AppNavigator() {
           },
           headerTintColor: Colors.primary,
           headerTitleStyle: {
-            fontFamily: 'SpaceMono-Bold',
+            fontFamily: 'monospace', // Using system monospace instead of SpaceMono
             fontSize: 16,
           },
           contentStyle: {
