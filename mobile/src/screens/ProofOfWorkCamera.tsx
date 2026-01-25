@@ -5,10 +5,9 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StatusBar, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StatusBar, Alert, StyleSheet } from 'react-native';
 import { CameraView, useCameraPermissions, CameraType } from 'expo-camera';
-import { Colors, TerminalStyles } from '@constants/theme';
-import TerminalButton from '@components/TerminalButton';
+import { Colors, TerminalStyles } from '../constants/theme';
 
 export default function ProofOfWorkCamera() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -56,8 +55,8 @@ export default function ProofOfWorkCamera() {
 
   if (!permission) {
     return (
-      <View className="flex-1 bg-terminal-bg justify-center items-center px-6">
-        <Text className="font-mono text-neon-cyan">
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>
           {TerminalStyles.loading}INITIALIZING CAMERA...
         </Text>
       </View>
@@ -66,64 +65,68 @@ export default function ProofOfWorkCamera() {
 
   if (!permission.granted) {
     return (
-      <View className="flex-1 bg-terminal-bg justify-center px-6">
+      <View style={styles.permissionContainer}>
         <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
-        <Text className="font-mono text-neon-cyan text-xl mb-4">
+        <Text style={styles.permissionTitle}>
           CAMERA ACCESS REQUIRED
         </Text>
-        <Text className="font-mono text-terminal-gray text-sm mb-8">
+        <Text style={styles.permissionSubtitle}>
           // VOUCH NEEDS CAMERA TO VERIFY WORKOUTS
         </Text>
-        <TerminalButton
+        <TouchableOpacity
           onPress={requestPermission}
-          label="> GRANT PERMISSION"
-        />
+          style={styles.permissionButton}
+        >
+          <Text style={styles.permissionButtonText}>
+            {"> GRANT PERMISSION"}
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-terminal-bg">
+    <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
 
       {/* Camera View */}
-      <View className="flex-1">
+      <View style={styles.cameraContainer}>
         <CameraView
           ref={cameraRef}
-          style={{ flex: 1 }}
+          style={styles.camera}
           facing={facing}
         >
           {/* Overlay HUD */}
-          <View className="flex-1 justify-between p-6">
+          <View style={styles.overlay}>
             {/* Top Bar */}
-            <View className="bg-terminal-bg/80 p-4 border border-neon-cyan/30">
-              <Text className="font-mono-bold text-neon-cyan text-lg">
+            <View style={styles.topBar}>
+              <Text style={styles.topBarTitle}>
                 PROOF-OF-WORK
               </Text>
-              <Text className="font-mono text-terminal-green text-xs mt-1">
+              <Text style={styles.topBarSubtitle}>
                 {TerminalStyles.linePrefix}CAPTURE WORKOUT EVIDENCE
               </Text>
             </View>
 
             {/* Center Crosshair Guide */}
-            <View className="items-center justify-center">
-              <View className="w-48 h-48 border-2 border-neon-cyan/50">
-                <View className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-neon-cyan" />
-                <View className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-neon-cyan" />
-                <View className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-neon-cyan" />
-                <View className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-neon-cyan" />
+            <View style={styles.crosshairContainer}>
+              <View style={styles.crosshair}>
+                <View style={[styles.corner, styles.cornerTopLeft]} />
+                <View style={[styles.corner, styles.cornerTopRight]} />
+                <View style={[styles.corner, styles.cornerBottomLeft]} />
+                <View style={[styles.corner, styles.cornerBottomRight]} />
               </View>
             </View>
 
             {/* Bottom Controls */}
-            <View className="bg-terminal-bg/80 p-4 border border-neon-cyan/30">
-              <View className="flex-row justify-between items-center">
+            <View style={styles.bottomControls}>
+              <View style={styles.controlsRow}>
                 {/* Flip Camera */}
                 <TouchableOpacity
                   onPress={toggleCamera}
-                  className="bg-terminal-gray border border-terminal-gray px-4 py-3"
+                  style={styles.flipButton}
                 >
-                  <Text className="font-mono text-neon-cyan text-xs">
+                  <Text style={styles.flipButtonText}>
                     FLIP
                   </Text>
                 </TouchableOpacity>
@@ -132,16 +135,17 @@ export default function ProofOfWorkCamera() {
                 <TouchableOpacity
                   onPress={handleCapture}
                   disabled={isCapturing}
-                  className="w-20 h-20 rounded-full border-4 border-neon-cyan justify-center items-center bg-terminal-gray active:bg-neon-cyan/20"
+                  style={styles.captureButton}
+                  activeOpacity={0.7}
                 >
-                  <View className="w-16 h-16 rounded-full bg-neon-cyan/30" />
+                  <View style={styles.captureButtonInner} />
                 </TouchableOpacity>
 
                 {/* Spacer for symmetry */}
-                <View className="w-16" />
+                <View style={styles.spacer} />
               </View>
 
-              <Text className="font-mono text-terminal-gray text-xs text-center mt-4">
+              <Text style={styles.bottomHint}>
                 {TerminalStyles.linePrefix}SYNC WITH HEALTHKIT AFTER CAPTURE
               </Text>
             </View>
@@ -151,3 +155,186 @@ export default function ProofOfWorkCamera() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  // Loading state
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: Colors.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
+  loadingText: {
+    fontFamily: 'monospace',
+    color: Colors.primary,
+  },
+
+  // Permission state
+  permissionContainer: {
+    flex: 1,
+    backgroundColor: Colors.background,
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  permissionTitle: {
+    fontFamily: 'monospace',
+    fontWeight: 'bold',
+    color: Colors.primary,
+    fontSize: 20,
+    marginBottom: 16,
+  },
+  permissionSubtitle: {
+    fontFamily: 'monospace',
+    color: Colors.textSecondary,
+    fontSize: 14,
+    marginBottom: 32,
+  },
+  permissionButton: {
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+  },
+  permissionButtonText: {
+    fontFamily: 'monospace',
+    fontWeight: 'bold',
+    color: Colors.primary,
+    textAlign: 'center',
+    fontSize: 16,
+  },
+
+  // Camera view
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  cameraContainer: {
+    flex: 1,
+  },
+  camera: {
+    flex: 1,
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: 'space-between',
+    padding: 24,
+  },
+
+  // Top bar
+  topBar: {
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 255, 0.3)',
+  },
+  topBarTitle: {
+    fontFamily: 'monospace',
+    fontWeight: 'bold',
+    color: Colors.primary,
+    fontSize: 18,
+  },
+  topBarSubtitle: {
+    fontFamily: 'monospace',
+    color: Colors.success,
+    fontSize: 12,
+    marginTop: 4,
+  },
+
+  // Crosshair
+  crosshairContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  crosshair: {
+    width: 192,
+    height: 192,
+    borderWidth: 2,
+    borderColor: 'rgba(0, 255, 255, 0.5)',
+  },
+  corner: {
+    position: 'absolute',
+    width: 32,
+    height: 32,
+  },
+  cornerTopLeft: {
+    top: 0,
+    left: 0,
+    borderTopWidth: 4,
+    borderLeftWidth: 4,
+    borderColor: Colors.primary,
+  },
+  cornerTopRight: {
+    top: 0,
+    right: 0,
+    borderTopWidth: 4,
+    borderRightWidth: 4,
+    borderColor: Colors.primary,
+  },
+  cornerBottomLeft: {
+    bottom: 0,
+    left: 0,
+    borderBottomWidth: 4,
+    borderLeftWidth: 4,
+    borderColor: Colors.primary,
+  },
+  cornerBottomRight: {
+    bottom: 0,
+    right: 0,
+    borderBottomWidth: 4,
+    borderRightWidth: 4,
+    borderColor: Colors.primary,
+  },
+
+  // Bottom controls
+  bottomControls: {
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 255, 0.3)',
+  },
+  controlsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  flipButton: {
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.textSecondary,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  flipButtonText: {
+    fontFamily: 'monospace',
+    color: Colors.primary,
+    fontSize: 12,
+  },
+  captureButton: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 4,
+    borderColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.surface,
+  },
+  captureButtonInner: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(0, 255, 255, 0.3)',
+  },
+  spacer: {
+    width: 64,
+  },
+  bottomHint: {
+    fontFamily: 'monospace',
+    color: Colors.textSecondary,
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 16,
+  },
+});
