@@ -1,12 +1,12 @@
 /**
  * VOUCH // APP NAVIGATION
  * Stack navigation for mobile app
+ * TEMPORARY: Privy authentication removed for testing
  */
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { usePrivyAuth } from '../hooks/usePrivyAuth';
 import LoginScreen from '../screens/LoginScreen';
 import ProofOfWorkCamera from '../screens/ProofOfWorkCamera';
 import { Colors } from '../constants/theme';
@@ -14,10 +14,8 @@ import { Colors } from '../constants/theme';
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
-  const { isAuthenticated } = usePrivyAuth();
-
-  // TEMPORARY: Removed isReady check - was causing infinite splash screen
-  // App now loads immediately and handles auth state dynamically
+  // TEMPORARY: Removed Privy auth - just show login screen for now
+  // Will add back authentication flow later
 
   return (
     <NavigationContainer>
@@ -28,7 +26,7 @@ export default function AppNavigator() {
           },
           headerTintColor: Colors.primary,
           headerTitleStyle: {
-            fontFamily: 'monospace', // Using system monospace instead of SpaceMono
+            fontFamily: 'monospace',
             fontSize: 16,
           },
           contentStyle: {
@@ -36,25 +34,19 @@ export default function AppNavigator() {
           },
         }}
       >
-        {!isAuthenticated ? (
-          <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{ headerShown: false }}
-          />
-        ) : (
-          <>
-            <Stack.Screen
-              name="Camera"
-              component={ProofOfWorkCamera}
-              options={{
-                title: 'PROOF-OF-WORK',
-                headerBackTitle: 'BACK',
-              }}
-            />
-            {/* TODO: Add other authenticated screens */}
-          </>
-        )}
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Camera"
+          component={ProofOfWorkCamera}
+          options={{
+            title: 'PROOF-OF-WORK',
+            headerBackTitle: 'BACK',
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

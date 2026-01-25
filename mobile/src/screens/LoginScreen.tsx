@@ -1,16 +1,13 @@
 /**
  * VOUCH // LOGIN SCREEN
- * Terminal-style authentication via Privy Mobile SDK
- * TEMPORARY: Using StyleSheet instead of NativeWind due to Babel config issues
+ * Terminal-style screen (Privy authentication temporarily removed)
  */
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StatusBar, StyleSheet } from 'react-native';
-import { usePrivyAuth } from '../hooks/usePrivyAuth';
 import { Colors, TerminalStyles } from '../constants/theme';
 
-export default function LoginScreen() {
-  const { loginWithOAuth, isReady, oAuthState } = usePrivyAuth();
+export default function LoginScreen({ navigation }: any) {
   const [cursorVisible, setCursorVisible] = useState(true);
   const [bootText, setBootText] = useState('');
   const bootSequence = [
@@ -42,12 +39,10 @@ export default function LoginScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleLogin = async () => {
-    if (!isReady) return;
-    await loginWithOAuth({ provider: 'google' });
+  const handleContinue = () => {
+    // Navigate to camera screen for testing
+    navigation.navigate('Camera');
   };
-
-  const isLoading = oAuthState.status === 'loading';
 
   return (
     <View style={styles.container}>
@@ -72,31 +67,27 @@ export default function LoginScreen() {
       {/* Authentication Section */}
       <View style={styles.authSection}>
         <Text style={styles.promptText}>
-          {TerminalStyles.prompt}AUTHENTICATE TO CONTINUE
+          {TerminalStyles.prompt}PRIVY AUTHENTICATION DISABLED (TESTING)
         </Text>
 
-        {/* Login Button - Terminal Style */}
+        {/* Continue Button - Terminal Style */}
         <TouchableOpacity
-          onPress={handleLogin}
-          disabled={!isReady || isLoading}
-          style={[
-            styles.loginButton,
-            (!isReady || isLoading) && styles.loginButtonDisabled
-          ]}
+          onPress={handleContinue}
+          style={styles.loginButton}
           activeOpacity={0.7}
         >
           <Text style={styles.loginButtonText}>
-            {isLoading ? '> CONNECTING...' : isReady ? '> CONNECT WALLET' : '> INITIALIZING...'}
+            {'> CONTINUE TO APP'}
           </Text>
         </TouchableOpacity>
 
         {/* Info Text */}
         <View style={styles.infoSection}>
           <Text style={styles.infoText}>
-            // SECURE AUTHENTICATION VIA PRIVY
+            // AUTHENTICATION WILL BE ADDED LATER
           </Text>
           <Text style={styles.infoText}>
-            // NO PASSWORDS. NO BULLSHIT.
+            // TESTING CORE FUNCTIONALITY FIRST
           </Text>
         </View>
       </View>
@@ -160,9 +151,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 0, // Terminal sharp edges
-  },
-  loginButtonDisabled: {
-    opacity: 0.5,
   },
   loginButtonText: {
     fontFamily: 'monospace',
