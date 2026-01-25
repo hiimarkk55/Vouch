@@ -16,43 +16,17 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "io.vouch.mobile",
-      "infoPlist": {
-        "NSHealthShareUsageDescription": "VOUCH needs access to your health data to verify workout completion and sync biometric proof-of-work.",
-        "NSHealthUpdateUsageDescription": "VOUCH needs to write workout data for verified activities.",
-        "NSCameraUsageDescription": "VOUCH requires camera access to capture proof-of-work verification photos.",
-        "NSPhotoLibraryUsageDescription": "VOUCH needs photo library access to save workout verification images."
-      }
+      "bundleIdentifier": "io.vouch.mobile"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
-      "package": "io.vouch.mobile",
-      "permissions": [
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE",
-        "ACTIVITY_RECOGNITION"
-      ]
+      "package": "io.vouch.mobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-router",
-      "expo-font",
-      "expo-secure-store",
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "VOUCH requires camera access for workout verification."
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true
     }
   }
 }
