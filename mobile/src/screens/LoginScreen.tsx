@@ -4,10 +4,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StatusBar, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StatusBar, StyleSheet, Alert } from 'react-native';
 import { Colors, TerminalStyles } from '../constants/theme';
 
-export default function LoginScreen({ navigation }: any) {
+export default function LoginScreen() {
   const [cursorVisible, setCursorVisible] = useState(true);
   const [bootText, setBootText] = useState('');
   const bootSequence = [
@@ -40,8 +40,12 @@ export default function LoginScreen({ navigation }: any) {
   }, []);
 
   const handleContinue = () => {
-    // Navigate to camera screen for testing
-    navigation.navigate('Camera');
+    // TESTING: Show alert to confirm interaction works
+    Alert.alert(
+      '✓ VOUCH LOADED',
+      'Navigation and UI working!\n\nNext steps:\n- Add camera functionality\n- Add authentication\n- Add Firebase integration',
+      [{ text: 'OK', style: 'default' }]
+    );
   };
 
   return (
