@@ -20,7 +20,29 @@
       }
     },
     "android": {
-      "package": "io.vouch.mobile"
+      "package": "io.vouch.mobile",
+      "versionCode": 1,
+      "compileSdkVersion": 35,
+      "targetSdkVersion": 35,
+      "minSdkVersion": 24,
+      "buildToolsVersion": "35.0.0",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACTIVITY_RECOGNITION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "BODY_SENSORS"
+      ],
+      "blockedPermissions": [],
+      "config": {
+        "googleMobileAdsAppId": ""
+      }
     },
     "plugins": [
       "expo-dev-client"
