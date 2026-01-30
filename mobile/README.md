@@ -53,6 +53,12 @@ mobile/
 
 ## SETUP INSTRUCTIONS
 
+### Quick Start (Android Studio)
+
+**For Android Studio emulator setup, see:**
+- 📱 **`QUICKSTART_ANDROID.md`** - Get running in 15 minutes
+- 📖 **`ANDROID_STUDIO_SETUP.md`** - Complete setup guide
+
 ### 1. Install Dependencies
 
 ```bash
@@ -71,6 +77,7 @@ cp .env.example .env
 Required variables:
 - `EXPO_PUBLIC_PRIVY_APP_ID`: Your Privy app ID (same as web)
 - `EXPO_PUBLIC_FIREBASE_*`: Firebase config (shared with web project)
+- `EXPO_PUBLIC_MOCK_BIOMETRICS=true`: Enable mock data for emulator testing
 
 ### 3. Install Space Mono Font
 
@@ -80,13 +87,21 @@ Download Space Mono font and place in `assets/fonts/`:
 
 ### 4. Run Development Server
 
+**For Android Studio Emulator (Recommended):**
 ```bash
+# First time: Build and install development client
+npm run android
+
+# Subsequent runs: Start dev server
 npm start
-# or
-npx expo start
+# Then press 'a' for Android
 ```
 
-Press `i` for iOS simulator or `a` for Android emulator.
+**For Expo Go (Limited Features):**
+```bash
+npm start
+# Scan QR code with Expo Go app
+```
 
 ---
 
@@ -177,26 +192,49 @@ Permissions requested in `useBiometricSync.ts`:
 
 ## DEVELOPMENT COMMANDS
 
+### Android Studio Development
+
 ```bash
-# Start dev server
-npm start
-
-# Run on iOS
-npm run ios
-
-# Run on Android
+# Build and run on Android emulator (first time)
 npm run android
 
+# Start emulator (from command line)
+npm run emulator
+
+# Start dev server only
+npm start
+
+# Clean Android build
+npm run android:clean
+
+# View React Native logs
+npm run logcat
+
+# Generate native Android project
+npm run prebuild
+```
+
+### iOS Development
+
+```bash
+# Build and run on iOS simulator
+npm run ios
+
+# Start iOS simulator only
+npm run ios:simulator
+```
+
+### General Commands
+
+```bash
 # Run linter
 npm run lint
 
 # Run tests
 npm test
 
-# Build for iOS (requires EAS)
+# Build for production (EAS)
 npm run build:ios
-
-# Build for Android
 npm run build:android
 ```
 

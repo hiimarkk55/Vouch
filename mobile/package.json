@@ -4,13 +4,22 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "npx expo start",
-    "android": "npx expo start --android",
-    "ios": "npx expo start --ios",
+    "android": "npx expo run:android",
+    "android:emulator": "npx expo start --android",
+    "android:release": "npx expo run:android --variant release",
+    "android:clean": "cd android && ./gradlew clean && cd ..",
+    "android:build": "cd android && ./gradlew assembleDebug && cd ..",
+    "ios": "npx expo run:ios",
+    "ios:simulator": "npx expo start --ios",
     "web": "npx expo start --web",
+    "emulator": "emulator -avd Vouch_Test_Device",
+    "logcat": "adb logcat *:S ReactNative:V ReactNativeJS:V",
     "lint": "eslint .",
     "test": "jest",
     "build:ios": "eas build --platform ios",
-    "build:android": "eas build --platform android"
+    "build:android": "eas build --platform android",
+    "prebuild": "npx expo prebuild",
+    "prebuild:clean": "npx expo prebuild --clean"
   },
   "dependencies": {
     "expo": "~54.0.32",
